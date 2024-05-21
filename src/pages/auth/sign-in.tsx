@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@radix-ui/react-label"
 import { useMutation } from '@tanstack/react-query'
-import { Link } from "react-router-dom"
+import { Link, useSearchParams } from "react-router-dom"
 import { toast } from "sonner"
 
 
@@ -18,7 +18,13 @@ const sininForm = z.object({
 type SigninForm = z.infer<typeof sininForm>
 
 export function SignIn() {
-  const { register, handleSubmit, formState: { isSubmitting } } = useForm<SigninForm>()
+  const [searchParams] = useSearchParams()
+
+  const { register, handleSubmit, formState: { isSubmitting } } = useForm<SigninForm>({
+    defaultValues: {
+      email: searchParams.get('email') ?? '',
+    },
+  })
 
   const { mutateAsync: authenticate } = useMutation({
     mutationFn: signIn,

@@ -4,9 +4,11 @@ import { Link, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { z } from "zod"
 
+import { registerRestaurant } from '@/api/register-restaurant'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@radix-ui/react-label"
+import { useMutation } from '@tanstack/react-query'
 
 
 const signUpForm = z.object({
@@ -23,16 +25,25 @@ export function SignUp() {
 
   const { register, handleSubmit, formState: { isSubmitting } } = useForm<SignUpForm>()
 
+  const { mutateAsync: resgisterRestaurantFn } = useMutation({
+    mutationFn: registerRestaurant,
+  })
+
   async function handleSignUp(data: SignUpForm) {
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await resgisterRestaurantFn({
+        restaurantName: data.restaurantName,
+        managerName: data.manangerName,
+        email: data.email,
+        phone: data.phone,
+      })
 
       toast.success('Restaurante cadastrado com sucesso.', {
         action: {
           label: 'Login',
           onClick: () =>
-            navigate('/sign-in'),
+            navigate(`/sign-in?email=${data.email}`),
         }
       })
     } catch {
