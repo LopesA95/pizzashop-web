@@ -14,7 +14,7 @@ import { Textarea } from './ui/textarea'
 
 const storeProfileSchema = z.object({
   name: z.string().min(1),
-  description: z.string(),
+  description: z.string().nullable()
 })
 
 type StoreProfileSchema = z.infer<typeof storeProfileSchema>
@@ -40,17 +40,30 @@ export const StoreProfileDialog = () => {
     }
   })
 
-  const { mutateAsync: updateProfileFn } = useMutation({
-    mutationFn: updateProfile,
-    onSuccess(_, { name, description }) {
-      const cached = queryClient.getQueryData<GetManagedRestaurantResponse>(['managed-restaurant'])
+  function updateManagedRestaurantCached({ name, description }: StoreProfileSchema) {
+    const cached = queryClient.getQueryData<GetManagedRestaurantResponse>(['managed-restaurant'])
 
-      if (cached) {
-        queryClient.setQueryData<GetManagedRestaurantResponse>(['managed-restaurant'], {
+    if (cached) {
+      queryClient.setQueryData<GetManagedRestaurantResponse>(['managed-restaurant'],
+        {
           ...cached,
           name,
           description,
-        })
+        }
+      )
+    }
+    return { cached }
+  }
+
+  const { mutateAsync: updateProfileFn } = useMutation({
+    mutationFn: updateProfile,
+    onMutate({ name, description }) {
+      const { cached } = updateManagedRestaurantCached({ name, description })
+      return { previousProfile: cached }
+    },
+    onError(_, __, context) {
+      if (context?.previousProfile) {
+        updateManagedRestaurantCached(context.previousProfile)
       }
     },
   })
