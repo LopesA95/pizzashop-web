@@ -1,12 +1,14 @@
 import { api } from '@/lib/axios'
 
-export interface GetDayOrderAmountResponse {
+export interface GetDayOrdersAmountResponse {
   amount: number
-  diffFromYesteday: number
+  diffFromYesterday: number
 }
 
 export async function getDayOrdersAmount() {
-  const response = await api.get<GetDayOrderAmountResponse>('/metrics/day-orders-amount')
+  const response = await api.get<GetDayOrdersAmountResponse>(
+    '/metrics/day-orders-amount',
+  )
 
   return response.data
 }
