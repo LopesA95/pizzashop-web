@@ -6,5 +6,4 @@ export interface ApproveOrderParams {
 
 export async function approveOrder({ orderId }: ApproveOrderParams) {
   await api.patch(`/orders/${orderId}/approve`)
-
 }

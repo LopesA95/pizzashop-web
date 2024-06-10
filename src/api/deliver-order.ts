@@ -6,5 +6,4 @@ export interface DeliverOrderParams {
 
 export async function deliverOrder({ orderId }: DeliverOrderParams) {
   await api.patch(`/orders/${orderId}/deliver`)
-
 }

@@ -5,9 +5,9 @@ export interface GetOrderDetailsParams {
 }
 
 export interface GetOrderDetailsResponse {
-  status: "pending" | "canceled" | "processing" | "delivering" | "delivered"
   id: string
   createdAt: string
+  status: 'pending' | 'canceled' | 'processing' | 'delivering' | 'delivered'
   totalInCents: number
   customer: {
     name: string
